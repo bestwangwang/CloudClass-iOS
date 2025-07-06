@@ -54,10 +54,26 @@ class FcrSmallTachedWindowUIComponent: UIViewController {
     }
     
     func updateLayout(_ layout: UICollectionViewFlowLayout) {
-        let coHostLayout = layout.copyLayout()
+        
+        let coHostLayout = UICollectionViewFlowLayout()
+        coHostLayout.scrollDirection = .vertical
+        coHostLayout.itemSize = CGSize(
+            width: view.bounds.width,
+            height: view.bounds.height / 2.0,
+        )
+        coHostLayout.minimumLineSpacing = 0
+        coHostLayout.minimumInteritemSpacing = 0
         coHost.updateLayout(coHostLayout)
         
-        let teacherLayout = layout.copyLayout()
+        
+        let teacherLayout = UICollectionViewFlowLayout()
+        teacherLayout.scrollDirection = .horizontal
+        teacherLayout.itemSize = CGSize(
+            width: view.bounds.width,
+            height: view.bounds.height / 2.0,
+        )
+        teacherLayout.minimumLineSpacing = 0
+        teacherLayout.minimumInteritemSpacing = 0
         teacher.updateLayout(teacherLayout)
         
         updateViewFrame()
@@ -151,14 +167,78 @@ private extension FcrSmallTachedWindowUIComponent {
         
         let coHostLeft = (itemWidth + itemLineSpacing) * teacherCount + firstItemX
         
+        print("###benco: coHostCount:\(coHostCount) teacherCount:\(teacherCount)")
+        
+        let radio = coHostCount <= 1 ? 0.5 : 0.4
+        
+        let teacherHeight = view.bounds.height * radio
+        let coHostHeight = view.bounds.height - teacherHeight
+        
+        let itemSize: CGSize
+        if coHostCount <= 1 {
+            itemSize = CGSize(
+                width: view.bounds.width,
+                height: coHostHeight
+            )
+        } else if coHostCount == 2 {
+            itemSize = CGSize(
+                width: view.bounds.width,
+                height: coHostHeight / 2
+            )
+        } else {
+            itemSize = CGSize(
+                width: view.bounds.width / 2.0,
+                height: coHostHeight / 2
+            )
+        }
+        
+        let oldCoHostItemSize = (coHost.layout as UICollectionViewFlowLayout).itemSize
+        if !oldCoHostItemSize.equalTo(itemSize) {
+            let coHostLayout = UICollectionViewFlowLayout()
+            coHostLayout.scrollDirection = .vertical
+            
+            coHostLayout.itemSize = itemSize
+            coHostLayout.minimumLineSpacing = 0
+            coHostLayout.minimumInteritemSpacing = 0
+            coHost.updateLayout(coHostLayout)
+            
+            print("###benco: updateCoHost")
+        }
+        
+        let oldTeacherItemSize = (teacher.layout as UICollectionViewFlowLayout).itemSize
+        
+        let teacherItemSize = CGSize(
+            width: view.bounds.width,
+            height: teacherHeight,
+        )
+        
+        if !oldTeacherItemSize.equalTo(teacherItemSize) {
+            let teacherLayout = UICollectionViewFlowLayout()
+            teacherLayout.scrollDirection = .horizontal
+            teacherLayout.itemSize = teacherItemSize
+            teacherLayout.minimumLineSpacing = 0
+            teacherLayout.minimumInteritemSpacing = 0
+            teacher.updateLayout(teacherLayout)
+            
+            print("###benco: updateteacher")
+        }
+                
         coHost.view.mas_remakeConstraints { make in
+            /*
             make?.top.right().bottom().equalTo()(0)
             make?.left.equalTo()(coHostLeft)
+             */
+            make?.left.right().bottom().equalTo()(0)
+            make?.top.equalTo()(teacher.view.mas_bottom)
         }
         
         teacher.view.mas_remakeConstraints { make in
+            /*
             make?.left.top().bottom().equalTo()(0)
             make?.right.equalTo()(coHost.view.mas_left)?.equalTo()(-itemLineSpacing)
+             */
+            make?.left.right().top().equalTo()(0)
+            make?.height.equalTo()(view.mas_height)?.multipliedBy()(radio)
         }
         
         UIView.animate(withDuration: TimeInterval.agora_animation) {

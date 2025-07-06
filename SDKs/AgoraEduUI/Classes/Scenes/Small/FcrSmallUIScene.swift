@@ -246,10 +246,18 @@ import AgoraWidget
             make?.height.equalTo()(UIDevice.current.agora_is_pad ? 20 : 14)
         }
         
-        boardComponent.view.mas_makeConstraints { make in
+        boardComponent.view.mas_makeConstraints { [weak self] make in
+            guard let `self` = self else {
+                return
+            }
+            /*
             make?.height.equalTo()(AgoraFit.scale(307))
             make?.left.right().bottom().equalTo()(0)
             make?.bottom.equalTo()(0)
+             */
+            make?.top.equalTo()(self.stateComponent.view.mas_bottom)?.offset()(2)
+            make?.bottom.right().equalTo()(0)
+            make?.left.equalTo()(self.renderComponent.view.mas_right)?.offset()(2)
         }
         
         renderComponent.view.mas_makeConstraints { [weak self] make in
@@ -257,9 +265,16 @@ import AgoraWidget
                 return
             }
             
+            make?.top.equalTo()(self.stateComponent.view.mas_bottom)?.offset()(2)
+            make?.left.equalTo()(0)
+            make?.bottom.equalTo()(0)
+            make?.width.equalTo()(AgoraFit.scale(200))
+            
+            /*
             make?.left.right().equalTo()(0)
             make?.top.equalTo()(self.stateComponent.view.mas_bottom)?.offset()(2)
             make?.bottom.equalTo()(self.boardComponent.view.mas_top)?.offset()(-2)
+             */
         }
         
         toolBarComponent.view.mas_remakeConstraints { [weak self] make in
@@ -332,9 +347,18 @@ import AgoraWidget
         renderComponent.view.agora_visible = show
         
         if show {
-            boardComponent.view.mas_remakeConstraints { make in
+            boardComponent.view.mas_remakeConstraints { [weak self] make in
+                /*
                 make?.height.equalTo()(AgoraFit.scale(307))
                 make?.left.right().bottom().equalTo()(0)
+                 */
+                
+                guard let `self` = self else {
+                    return
+                }
+                make?.top.equalTo()(self.stateComponent.view.mas_bottom)?.offset()(2)
+                make?.bottom.right().equalTo()(0)
+                make?.left.equalTo()(self.renderComponent.view.mas_right)?.offset()
             }
         } else {
             boardComponent.view.mas_remakeConstraints { [weak self] make in
