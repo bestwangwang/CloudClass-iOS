@@ -633,7 +633,7 @@ struct FcrUIItemAgoraChatMuteAll: FcrUIItemProtocol {
 }
 
 struct FcrUIItemAgoraChatEmoji: FcrUIItemProtocol {
-    var visible: Bool = true
+    var visible: Bool = false
     var enable: Bool  = true
     
     let textColor = FcrUIColorGroup.textContrastColor
@@ -641,7 +641,7 @@ struct FcrUIItemAgoraChatEmoji: FcrUIItemProtocol {
 }
 
 struct FcrUIItemAgoraChatPicture: FcrUIItemProtocol {
-    var visible: Bool = true
+    var visible: Bool = false
     var enable: Bool  = true
     
     let textColor = FcrUIColorGroup.textContrastColor

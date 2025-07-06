@@ -64,6 +64,9 @@ import UIKit
     private lazy var toolBarComponent = FcrToolBarUIComponent(userController: contextPool.user,
                                                               delegate: self)
     
+    private lazy var messageToolBarComponent = FcrToolBarUIComponent(userController: contextPool.user,
+                                                              delegate: self)
+    
     /** 渲染 控制器*/
     private lazy var renderComponent = FcrOneToOneTachedWindowUIComponent(roomController: contextPool.room,
                                                                           userController: contextPool.user,
@@ -143,6 +146,7 @@ import UIKit
     public override func didClickCtrlMaskView() {
         super.didClickCtrlMaskView()
         toolBarComponent.deselectAll()
+        messageToolBarComponent.deselectAll()
     }
     
     // MARK: AgoraUIContentContainer
@@ -159,6 +163,7 @@ import UIKit
                                                  windowComponent,
                                                  classToolsComponent,
                                                  toolBarComponent,
+                                                 messageToolBarComponent,
                                                  toolCollectionComponent,
                                                  chatComponent,
                                                  watermarkComponent,
@@ -189,8 +194,7 @@ import UIKit
                 continue
             }
             
-            if component == chatComponent,
-               !UIDevice.current.agora_is_pad {
+            if component == chatComponent {
                 continue
             }
             
@@ -207,9 +211,10 @@ import UIKit
         if UIDevice.current.agora_is_pad {
             toolBarComponent.updateTools([.setting])
         } else {
-            toolBarComponent.updateTools([.setting,
-                                          .message])
+            toolBarComponent.updateTools([.setting])
         }
+        
+        messageToolBarComponent.updateTools([.message])
     }
     
     public override func initViewFrame() {
@@ -230,19 +235,8 @@ import UIKit
                 }
                 
                 make?.top.equalTo()(self.stateComponent.view.mas_bottom)?.offset()(2)
-                make?.right.equalTo()(0)
                 make?.width.equalTo()(244)
-                make?.height.equalTo()(276)
-            }
-            
-            chatComponent.view.mas_makeConstraints { [weak self] make in
-                guard let `self` = self else {
-                    return
-                }
-                
-                make?.top.equalTo()(self.renderComponent.view.mas_bottom)?.offset()(2)
-                make?.left.right().equalTo()(self.renderComponent.view)
-                make?.bottom.equalTo()(0)
+                make?.bottom.right().equalTo()(0)
             }
         } else {
             renderComponent.view.mas_makeConstraints { [weak self] make in
@@ -296,6 +290,20 @@ import UIKit
             make?.height.equalTo()(self.toolBarComponent.suggestSize.height)
         }
         
+        messageToolBarComponent.view.mas_remakeConstraints { [weak self] make in
+            guard let `self` = self else {
+                return
+            }
+            
+            let left = CGFloat(UIDevice.current.agora_is_pad ? 15 : 12)
+            let bottom = CGFloat(UIDevice.current.agora_is_pad ? -20 : -15)
+            
+            make?.left.equalTo()(self.boardComponent.view.mas_left)?.offset()(left)
+            make?.bottom.equalTo()(self.boardComponent.mas_bottomLayoutGuideBottom)?.offset()(bottom)
+            make?.width.equalTo()(self.messageToolBarComponent.suggestSize.width)
+            make?.height.equalTo()(self.messageToolBarComponent.suggestSize.height)
+        }
+        
         if userRole != .observer {
             toolCollectionComponent.view.mas_makeConstraints { [weak self] make in
                 guard let `self` = self else {
@@ -338,6 +346,7 @@ extension FcrOneToOneUIScene: FcrSettingUIComponentDelegate {
     func onShowShareView(_ view: UIView) {
         ctrlView = nil
         toolBarComponent.deselectAll()
+        messageToolBarComponent.deselectAll()
         self.view.addSubview(view)
         view.mas_makeConstraints { make in
             make?.top.left().bottom().right().equalTo()(0)
@@ -488,14 +497,15 @@ extension FcrOneToOneUIScene: FcrToolBarComponentDelegate {
             settingComponent.view.frame = CGRect(origin: .zero,
                                                  size: settingComponent.suggestSize)
             ctrlView = settingComponent.view
+            ctrlViewAnimationFromView(selectView)
         case .message:
             chatComponent.view.frame = CGRect(origin: .zero,
                                               size: chatComponent.suggestSize)
             ctrlView = chatComponent.view
+            ctrlViewAnimationFromView(selectView, showOnRight: true)
         default:
             break
         }
-        ctrlViewAnimationFromView(selectView)
     }
     
     func toolsViewDidDeselectTool(tool: FcrToolBarItemType) {
@@ -507,6 +517,7 @@ extension FcrOneToOneUIScene: FcrToolBarComponentDelegate {
 extension FcrOneToOneUIScene: FcrChatUIComponentDelegate {
     func updateChatRedDot(isShow: Bool) {
         toolBarComponent.updateChatRedDot(isShow: isShow)
+        messageToolBarComponent.updateChatRedDot(isShow: isShow)
     }
 }
 
@@ -514,6 +525,7 @@ extension FcrOneToOneUIScene: FcrChatUIComponentDelegate {
 extension FcrOneToOneUIScene: FcrToolCollectionUIComponentDelegate {
     func toolCollectionDidSelectCell(view: UIView) {
         toolBarComponent.deselectAll()
+        messageToolBarComponent.deselectAll()
         renderMenuComponent.dismissView()
         ctrlView = view
         ctrlViewAnimationFromView(toolCollectionComponent.view)
@@ -602,6 +614,19 @@ extension FcrOneToOneUIScene: FcrToolCollectionUIComponentDelegate {
                     make?.width.equalTo()(self.toolBarComponent.suggestSize.width)
                     make?.height.equalTo()(self.toolBarComponent.suggestSize.height)
                 }
+                self.messageToolBarComponent.view.mas_remakeConstraints { [weak self] make in
+                    guard let `self` = self else {
+                        return
+                    }
+                    
+                    let left = CGFloat(UIDevice.current.agora_is_pad ? -15 : -12)
+                    let bottom = CGFloat(UIDevice.current.agora_is_pad ? -15 : -12)
+                    
+                    make?.left.equalTo()(self.boardComponent.view.mas_left)?.offset()(left)
+                    make?.bottom.equalTo()(self.toolCollectionComponent.view.mas_top)?.offset()(bottom)
+                    make?.width.equalTo()(self.messageToolBarComponent.suggestSize.width)
+                    make?.height.equalTo()(self.messageToolBarComponent.suggestSize.height)
+                }
             } else {
                 self.toolBarComponent.view.mas_remakeConstraints { [weak self] make in
                     guard let `self` = self else {
@@ -615,6 +640,19 @@ extension FcrOneToOneUIScene: FcrToolCollectionUIComponentDelegate {
                     make?.bottom.equalTo()(self.boardComponent.mas_bottomLayoutGuideBottom)?.offset()(bottom)
                     make?.width.equalTo()(self.toolBarComponent.suggestSize.width)
                     make?.height.equalTo()(self.toolBarComponent.suggestSize.height)
+                }
+                self.messageToolBarComponent.view.mas_remakeConstraints { [weak self] make in
+                    guard let `self` = self else {
+                        return
+                    }
+                    
+                    let left = CGFloat(UIDevice.current.agora_is_pad ? 15 : 12)
+                    let bottom = CGFloat(UIDevice.current.agora_is_pad ? -20 : -15)
+                    
+                    make?.left.equalTo()(self.boardComponent.view.mas_left)?.offset()(left)
+                    make?.bottom.equalTo()(self.boardComponent.mas_bottomLayoutGuideBottom)?.offset()(bottom)
+                    make?.width.equalTo()(self.messageToolBarComponent.suggestSize.width)
+                    make?.height.equalTo()(self.messageToolBarComponent.suggestSize.height)
                 }
             }
         }, completion: nil)

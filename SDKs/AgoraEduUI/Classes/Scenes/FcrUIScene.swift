@@ -226,7 +226,7 @@ protocol FcrUISceneExit: NSObjectProtocol {
         // for override
     }
     
-    public func ctrlViewAnimationFromView(_ formView: UIView) {
+    public func ctrlViewAnimationFromView(_ formView: UIView, showOnRight: Bool = false) {
         guard let animaView = ctrlView else {
             return
         }
@@ -234,8 +234,20 @@ protocol FcrUISceneExit: NSObjectProtocol {
         let rect = formView.convert(formView.bounds,
                                     to: self.view)
         
-        var point = CGPoint(x: rect.minX - 8 - animaView.frame.size.width,
-                            y: rect.minY)
+        var point: CGPoint
+        var anchorX: CGFloat
+        
+        if showOnRight {
+            // 显示在右边
+            point = CGPoint(x: rect.maxX + 8,
+                           y: rect.minY)
+            anchorX = 0
+        } else {
+            // 显示在左边（原有逻辑）
+            point = CGPoint(x: rect.minX - 8 - animaView.frame.size.width,
+                           y: rect.minY)
+            anchorX = 1
+        }
         
         let estimateFrame = CGRect(origin: point,
                                    size: animaView.frame.size)
@@ -245,13 +257,20 @@ protocol FcrUISceneExit: NSObjectProtocol {
             point.y = self.contentView.frame.maxY - gap - animaView.bounds.height
         }
         
+        // 检查右边弹窗是否超出屏幕右边界
+        if showOnRight && estimateFrame.maxX > self.contentView.frame.maxX - 10 {
+            // 如果超出右边界，改为显示在左边
+            point.x = rect.minX - 8 - animaView.frame.size.width
+            anchorX = 1
+        }
+        
         animaView.frame = CGRect(origin: point,
                                  size: animaView.frame.size)
         // 运算动画锚点
         let anchorConvert = formView.convert(formView.bounds,
                                              to: animaView)
         
-        let anchor = CGPoint(x: 1,
+        let anchor = CGPoint(x: anchorX,
                              y: anchorConvert.origin.y / animaView.frame.height)
         // 开始动画运算
         let oldFrame = animaView.frame
