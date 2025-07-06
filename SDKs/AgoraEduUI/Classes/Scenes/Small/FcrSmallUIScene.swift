@@ -222,14 +222,14 @@ import AgoraWidget
         switch userRole {
         case .teacher:
             toolBarComponent.updateTools([.setting,
-                                          .message,
                                           .roster,
-                                          .handsList])
+                                          .handsList,
+                                          .message])
         case .student:
             toolBarComponent.updateTools([.setting,
-                                          .message,
                                           .roster,
-                                          .waveHands])
+                                          .waveHands,
+                                          .message])
         default:
             toolBarComponent.updateTools([.setting,
                                           .message])
