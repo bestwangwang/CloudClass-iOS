@@ -11,7 +11,7 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target = "10.0"
   spec.swift_versions        = ["5.0", "5.1", "5.2", "5.3", "5.4"]
 
-  spec.source                = { :git => "git@github.com:AgoraIO-Community/CloudClass-iOS.git", :tag => "AgoraEduUI_v" + "#{spec.version.to_s}" }
+  spec.source                = { :git => "git@github.com:bestwangwang/CloudClass-iOS.git", :tag => "AgoraEduUI_v" + "#{spec.version.to_s}" }
   spec.public_header_files   = "SDKs/AgoraEduUI/Classes/**/*.h"
   spec.source_files          = "SDKs/AgoraEduUI/Classes/**/*.{h,m,swift}"
   
