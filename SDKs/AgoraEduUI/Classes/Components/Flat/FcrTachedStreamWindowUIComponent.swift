@@ -222,7 +222,7 @@ class FcrTachedStreamWindowUIComponent: FcrUIComponent, AgoraUIContentContainer 
             let indexPath = IndexPath(item: index,
                                       section: 0)
             
-            collectionView.insertItems(at: [indexPath])
+            collectionView.reloadData()
             
             onDidAddItem(item)
         }
