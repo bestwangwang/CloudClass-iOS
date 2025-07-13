@@ -293,7 +293,7 @@ class FcrTachedStreamWindowUIComponent: FcrUIComponent, AgoraUIContentContainer 
         
         dataSource.remove(at: index)
         
-        collectionView.deleteItems(at: [indexPath])
+        collectionView.reloadData()
         
         onDidDeleteItem(item)
     }
