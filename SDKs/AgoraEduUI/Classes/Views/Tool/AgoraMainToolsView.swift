@@ -177,8 +177,8 @@ extension AgoraMainToolsView: UICollectionViewDelegate,
     
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.dequeueReusableCell(withClass: AgoraToolCollectionToolCell.self,
-                                                      for: indexPath)
+//        let cell = collectionView.dequeueReusableCell(withClass: AgoraToolCollectionToolCell.self,
+//                                                      for: indexPath)
         
         if collectionView == boardToolsView,
            indexPath.item < mainBoardTools.count {

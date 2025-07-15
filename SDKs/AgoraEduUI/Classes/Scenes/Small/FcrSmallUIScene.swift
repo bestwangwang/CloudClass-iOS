@@ -67,7 +67,8 @@ import AgoraWidget
     
     /** 工具栏*/
     private lazy var toolBarComponent = FcrToolBarUIComponent(userController: contextPool.user,
-                                                              delegate: self)
+                                                              delegate: self,
+                                                              scrollDirection: .horizontal)
     
     /** 教具 控制器*/
     private lazy var classToolsComponent = FcrClassToolsUIComponent(roomController: contextPool.room,
@@ -287,8 +288,8 @@ import AgoraWidget
             
             make?.right.equalTo()(self.boardComponent.view.mas_right)?.offset()(right)
             make?.bottom.equalTo()(self.boardComponent.mas_bottomLayoutGuideBottom)?.offset()(bottom)
-            make?.width.equalTo()(self.toolBarComponent.suggestSize.width)
-            make?.height.equalTo()(self.toolBarComponent.suggestSize.height)
+            make?.width.equalTo()(self.toolBarComponent.suggestSize.height)
+            make?.height.equalTo()(self.toolBarComponent.suggestSize.width)
         }
         
         if userRole != .observer {
@@ -297,9 +298,10 @@ import AgoraWidget
                     return
                 }
                 
+                let right = CGFloat(UIDevice.current.agora_is_pad ? -15 : -12)
                 let bottom = CGFloat(UIDevice.current.agora_is_pad ? -20 : -15)
                 
-                make?.centerX.equalTo()(self.toolBarComponent.view.mas_centerX)
+                make?.right.equalTo()(self.boardComponent.view.mas_right)?.offset()(right)
                 make?.bottom.equalTo()(self.boardComponent.view)?.offset()(bottom)
                 make?.width.height().equalTo()(self.toolCollectionComponent.suggestLength)
             }
@@ -496,10 +498,11 @@ extension FcrSmallUIScene: FcrToolCollectionUIComponentDelegate {
                     return
                 }
                 
+                let right = CGFloat(UIDevice.current.agora_is_pad ? -15 : -12)
                 let bottom = CGFloat(UIDevice.current.agora_is_pad ? -20 : -15)
                 
-                make?.centerX.equalTo()(self.toolBarComponent.view.mas_centerX)
-                make?.bottom.equalTo()(self.contentView)?.offset()(bottom)
+                make?.right.equalTo()(self.boardComponent.view.mas_right)?.offset()(right)
+                make?.bottom.equalTo()(self.boardComponent)?.offset()(bottom)
                 make?.width.equalTo()(self.toolCollectionComponent.suggestLength)
                 make?.height.equalTo()(self.toolCollectionComponent.suggestSpreadHeight)
             }
@@ -509,10 +512,11 @@ extension FcrSmallUIScene: FcrToolCollectionUIComponentDelegate {
                     return
                 }
                 
+                let right = CGFloat(UIDevice.current.agora_is_pad ? -15 : -12)
                 let bottom = CGFloat(UIDevice.current.agora_is_pad ? -20 : -15)
                 
-                make?.centerX.equalTo()(self.toolBarComponent.view.mas_centerX)
-                make?.bottom.equalTo()(self.contentView)?.offset()(bottom)
+                make?.right.equalTo()(self.boardComponent.view.mas_right)?.offset()(right)
+                make?.bottom.equalTo()(self.boardComponent)?.offset()(bottom)
                 make?.width.height().equalTo()(self.toolCollectionComponent.suggestLength)
             }
         }
@@ -568,12 +572,12 @@ extension FcrSmallUIScene: FcrToolCollectionUIComponentDelegate {
                     }
                     
                     let right = CGFloat(UIDevice.current.agora_is_pad ? -15 : -12)
-                    let bottom = CGFloat(UIDevice.current.agora_is_pad ? -15 : -12)
+                    let bottom = CGFloat(UIDevice.current.agora_is_pad ? -20 : -15)
                     
-                    make?.right.equalTo()(self.boardComponent.view.mas_right)?.offset()(right)
-                    make?.bottom.equalTo()(self.toolCollectionComponent.view.mas_top)?.offset()(bottom)
-                    make?.width.equalTo()(self.toolBarComponent.suggestSize.width)
-                    make?.height.equalTo()(self.toolBarComponent.suggestSize.height)
+                    make?.right.equalTo()(self.toolCollectionComponent.view.mas_left)?.offset()(right)
+                    make?.bottom.equalTo()(self.boardComponent.view.mas_bottom)?.offset()(bottom)
+                    make?.width.equalTo()(self.toolBarComponent.suggestSize.height)
+                    make?.height.equalTo()(self.toolBarComponent.suggestSize.width)
                 }
             } else {
                 self.toolBarComponent.view.mas_remakeConstraints { [weak self] make in
@@ -586,8 +590,8 @@ extension FcrSmallUIScene: FcrToolCollectionUIComponentDelegate {
                     
                     make?.right.equalTo()(self.boardComponent.view.mas_right)?.offset()(right)
                     make?.bottom.equalTo()(self.boardComponent.mas_bottomLayoutGuideBottom)?.offset()(bottom)
-                    make?.width.equalTo()(self.toolBarComponent.suggestSize.width)
-                    make?.height.equalTo()(self.toolBarComponent.suggestSize.height)
+                    make?.width.equalTo()(self.toolBarComponent.suggestSize.height)
+                    make?.height.equalTo()(self.toolBarComponent.suggestSize.width)
                 }
             }
         }, completion: nil)

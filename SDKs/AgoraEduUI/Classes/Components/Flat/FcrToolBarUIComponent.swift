@@ -80,12 +80,15 @@ class FcrToolBarUIComponent: FcrUIComponent {
         }
     }
     
+    private let scrollDirection: UICollectionView.ScrollDirection
+    
     init(userController: AgoraEduUserContext,
          subRoom: AgoraEduSubRoomContext? = nil,
-         delegate: FcrToolBarComponentDelegate? = nil) {
+         delegate: FcrToolBarComponentDelegate? = nil, scrollDirection: UICollectionView.ScrollDirection = .vertical) {
         self.userController = userController
         self.subRoom = subRoom
         self.delegate = delegate
+        self.scrollDirection = scrollDirection
         super.init(nibName: nil,
                    bundle: nil)
         
@@ -142,7 +145,7 @@ class FcrToolBarUIComponent: FcrUIComponent {
 extension FcrToolBarUIComponent: AgoraUIContentContainer, AgoraUIActivity {
     func initViews() {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+        layout.scrollDirection = scrollDirection
         layout.itemSize = CGSize(width: kButtonLength,
                                  height: kButtonLength)
         layout.minimumLineSpacing = kGap
